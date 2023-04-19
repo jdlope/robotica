@@ -20,6 +20,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
+import numpy as np
+import cv2
 import time
 
 from zmqRemoteApi import RemoteAPIClient
@@ -56,7 +58,7 @@ class P3DX():
     num_sonar = 16
     sonar_max = 1.0
 
-    def __init__(self, sim, robot_id):
+    def __init__(self, sim, robot_id, use_camera=False):
         self.sim = sim
         print('*** getting handles', robot_id)
         self.left_motor = self.sim.getObject(f'/{robot_id}/leftMotor')
@@ -64,6 +66,8 @@ class P3DX():
         self.sonar = []
         for i in range(self.num_sonar):
             self.sonar.append(self.sim.getObject(f'/{robot_id}/ultrasonicSensor[{i}]'))
+        if use_camera:
+            self.camera = self.sim.getObject(f'/{robot_id}/camera')
 
     def get_sonar(self):
         readings = []
@@ -71,6 +75,12 @@ class P3DX():
             res,dist,_,_,_ = self.sim.readProximitySensor(self.sonar[i])
             readings.append(dist if res == 1 else self.sonar_max)
         return readings
+
+    def get_image(self):
+        img, resX, resY = self.sim.getVisionSensorCharImage(self.camera)
+        img = np.frombuffer(img, dtype=np.uint8).reshape(resY, resX, 3)
+        img = cv2.flip(cv2.cvtColor(img, cv2.COLOR_BGR2RGB), 0)
+        return img
 
     def set_speed(self, left_speed, right_speed):
         self.sim.setJointTargetVelocity(self.left_motor, left_speed)
