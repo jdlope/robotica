@@ -1,6 +1,6 @@
 # config.bash
 #
-# Copyright (C) 2023 Javier de Lope
+# Copyright (C) 2024 Javier de Lope
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,5 +15,5 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-COPPELIA=$HOME/local/coppeliasim
-export PYTHONPATH=$PYTHONPATH:$COPPELIA/programming/zmqRemoteApi/clients/python
+COPPELIA=$HOME/local/CoppeliaSim_Edu_V4_6_0_rev18_Ubuntu22_04
+export PYTHONPATH=$PYTHONPATH:$COPPELIA/programming/zmqRemoteApi/clients/python/src
