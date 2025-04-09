@@ -4,7 +4,7 @@ robotica.py
 Provides the communication between CoppeliaSim robotics simulator and
 external Python applications via the ZeroMQ remote API.
 
-Copyright (C) 2024 Javier de Lope
+Copyright (C) 2025 Javier de Lope
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
