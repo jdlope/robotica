@@ -85,11 +85,9 @@ class P3DX():
         return img
 
     def get_lidar(self):
-        data = self.sim.getStringSignal('PioneerP3dxLidarData')
-        if data is None:
-            return []
-        else:
-            return self.sim.unpackFloatTable(data)
+        # data = self.sim.getFloatArrayProperty(self.sim.handle_scene, "signal.lidarData")
+        data = self.sim.getFloatArrayProperty(self.lidar, "signal.lidarData")
+        return data
 
     def set_speed(self, left_speed, right_speed):
         self.sim.setJointTargetVelocity(self.left_motor, left_speed)
