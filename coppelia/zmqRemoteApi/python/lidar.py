@@ -1,10 +1,10 @@
 '''
-avoid.py
+lidar.py
 
 Sample client for the Pioneer P3DX mobile robot that implements a
 kind of heuristic, rule-based controller for collision avoidance.
 
-Copyright (C) 2023 Javier de Lope
+Copyright (C) 2025 Javier de Lope
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ def main(args=None):
         readings = robot.get_sonar()
         lspeed, rspeed = avoid(readings)
         robot.set_speed(lspeed, rspeed)
-        print(robot.get_lidar())
+        print('L', len(robot.get_lidar()))
     coppelia.stop_simulation()
 
 

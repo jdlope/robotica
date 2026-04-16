@@ -4,7 +4,7 @@ robotica.py
 Provides the communication between CoppeliaSim robotics simulator and
 external Python applications via the ZeroMQ remote API.
 
-Copyright (C) 2024 Javier de Lope
+Copyright (C) 2025 Javier de Lope
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -85,11 +85,9 @@ class P3DX():
         return img
 
     def get_lidar(self):
-        data = self.sim.getStringSignal('PioneerP3dxLidarData')
-        if data is None:
-            return []
-        else:
-            return self.sim.unpackFloatTable(data)
+        # data = self.sim.getFloatArrayProperty(self.sim.handle_scene, "signal.lidarData")
+        data = self.sim.getFloatArrayProperty(self.lidar, "signal.lidarData")
+        return data
 
     def set_speed(self, left_speed, right_speed):
         self.sim.setJointTargetVelocity(self.left_motor, left_speed)
