@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "coppeliasim_core"
+version = "0.2.0"
+description = "Core infrastructure for working with CoppeliaSim"
+requires-python = ">=3.10"
+license = "GPL-3.0-or-later"
+dependencies = [
+    "coppeliasim-zmqremoteapi-client",
+    "numpy",
+    "opencv-python"
+]
+
+[tool.setuptools]
+packages = ["core"]
