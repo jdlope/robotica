@@ -4,7 +4,7 @@ camera.py
 Sample client for the Pioneer P3DX mobile robot that receives and
 displays images from the camera.
 
-Copyright (C) 2023 Javier de Lope
+Copyright (C) 2026 Javier de Lope
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,12 +21,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 import cv2
-import robotica
+
+from core import Coppelia
+from core import P3DX
 
 
 def main(args=None):
-    coppelia = robotica.Coppelia()
-    robot = robotica.P3DX(coppelia.sim, 'PioneerP3DX', True)
+    coppelia = Coppelia()
+    robot = P3DX(coppelia.sim, 'PioneerP3DX', True)
     coppelia.start_simulation()
     while coppelia.is_running():
         img = robot.get_image()
