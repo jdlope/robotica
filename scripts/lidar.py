@@ -4,7 +4,7 @@ lidar.py
 Sample client for the Pioneer P3DX mobile robot that implements a
 kind of heuristic, rule-based controller for collision avoidance.
 
-Copyright (C) 2025 Javier de Lope
+Copyright (C) 2026 Javier de Lope
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -20,7 +20,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-import robotica
+from core import Coppelia
+from core import P3DX
 
 
 def avoid(readings):
@@ -36,14 +37,14 @@ def avoid(readings):
 
 
 def main(args=None):
-    coppelia = robotica.Coppelia()
-    robot = robotica.P3DX(coppelia.sim, 'PioneerP3DX', use_lidar=True)
+    coppelia = Coppelia()
+    robot = P3DX(coppelia.sim, 'PioneerP3DX', use_lidar=True)
     coppelia.start_simulation()
     while coppelia.is_running():
         readings = robot.get_sonar()
         lspeed, rspeed = avoid(readings)
         robot.set_speed(lspeed, rspeed)
-        print('L', len(robot.get_lidar()))
+        print('data from lidar :', len(robot.get_lidar()))
     coppelia.stop_simulation()
 
 
