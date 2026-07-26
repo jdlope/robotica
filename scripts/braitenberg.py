@@ -4,7 +4,7 @@ braitenberg.py
 Sample client for collision avoidance based on the default
 Pioneer P3DX script in CoppeliaSim.
 
-Copyright (C) 2023 Javier de Lope
+Copyright (C) 2026 Javier de Lope
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -20,24 +20,25 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-import robotica
+from core import Coppelia
+from core import P3DX
 
 
 def main(args=None):
-    coppelia = robotica.Coppelia()
-    robot = robotica.P3DX(coppelia.sim, 'PioneerP3DX')
+    coppelia = Coppelia()
+    robot = P3DX(coppelia.sim, 'PioneerP3DX')
 
     min_speed = 2.0
     no_detection_dist = 0.5
     max_detection_dist = 0.2
-    detect = [0] * robot.num_sonar
+    detect = [0] * robot.NUM_SONAR
     lbraitenberg = [-0.2,-0.4,-0.6,-0.8,-1,-1.2,-1.4,-1.6, 0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]
     rbraitenberg = [-1.6,-1.4,-1.2,-1,-0.8,-0.6,-0.4,-0.2, 0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]
 
     coppelia.start_simulation()
     while coppelia.is_running():
         readings = robot.get_sonar()
-        for i in range(robot.num_sonar):
+        for i in range(robot.NUM_SONAR):
             dist = readings[i]
             if dist < no_detection_dist:
                 if dist < max_detection_dist:
@@ -47,7 +48,7 @@ def main(args=None):
                 detect[i] = 0
 
         lspeed, rspeed = min_speed, min_speed
-        for i in range(robot.num_sonar):
+        for i in range(robot.NUM_SONAR):
             lspeed += lbraitenberg[i] * detect[i]
             rspeed += rbraitenberg[i] * detect[i]
         robot.set_speed(lspeed, rspeed)
