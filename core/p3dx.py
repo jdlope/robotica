@@ -19,6 +19,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
+import warnings
+
 import cv2
 import numpy as np
 from core import Coppelia
@@ -47,6 +49,10 @@ class P3DX():
         if use_lidar:
             self.lidar = self.sim.getObject(f'/{robot_id}/lidar')
 
+    def set_wheel_velocities(self, w_r, w_l):
+        self.sim.setJointTargetVelocity(self.right_motor, w_r)
+        self.sim.setJointTargetVelocity(self.left_motor, w_l)
+
     def get_sonar(self):
         readings = []
         for i in range(self.NUM_SONAR):
@@ -66,6 +72,11 @@ class P3DX():
         return data
 
     def set_speed(self, left_speed, right_speed):
+        warnings.warn(
+            "set_speed() is deprecated; use set_wheel_velocities() instead",
+            DeprecationWarning,
+            stacklevel=2
+            )
         self.sim.setJointTargetVelocity(self.left_motor, left_speed)
         self.sim.setJointTargetVelocity(self.right_motor, right_speed)
 
