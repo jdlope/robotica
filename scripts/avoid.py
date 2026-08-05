@@ -26,14 +26,14 @@ from core import P3DX
 
 def avoid(readings):
     if (readings[3] < 0.1) or (readings[4] < 0.2):
-        lspeed, rspeed = +0.1, -0.8
+        w_r, w_l = -0.8, +0.1
     elif readings[1] < 0.1:
-        lspeed, rspeed = +1.3, +0.6
+        w_r, w_l = +0.6, +1.3
     elif readings[5] < 0.4:
-        lspeed, rspeed = +0.1, +0.9
+        w_r, w_l = +0.9, +0.1
     else:
-        lspeed, rspeed = +1.5, +1.5
-    return lspeed, rspeed
+        w_r, w_l = +1.5, +1.5
+    return w_r, w_l
 
 
 def main(args=None):
@@ -44,8 +44,8 @@ def main(args=None):
 
     while coppelia.is_running():
         readings = robot.get_sonar()
-        lspeed, rspeed = avoid(readings)
-        robot.set_speed(lspeed, rspeed)
+        w_r, w_l = avoid(readings)
+        robot.set_wheel_velocities(w_r, w_l)
 
     coppelia.stop_simulation()
 

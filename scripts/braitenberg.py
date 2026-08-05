@@ -47,11 +47,11 @@ def main(args=None):
             else:
                 detect[i] = 0
 
-        lspeed, rspeed = min_speed, min_speed
+        w_r, w_l = min_speed, min_speed
         for i in range(robot.NUM_SONAR):
-            lspeed += lbraitenberg[i] * detect[i]
-            rspeed += rbraitenberg[i] * detect[i]
-        robot.set_speed(lspeed, rspeed)
+            w_l += lbraitenberg[i] * detect[i]
+            w_r += rbraitenberg[i] * detect[i]
+        robot.set_wheel_velocities(w_r, w_l)
 
     coppelia.stop_simulation()
 

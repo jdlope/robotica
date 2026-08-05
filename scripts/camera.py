@@ -34,7 +34,7 @@ def main(args=None):
         img = robot.get_image()
         cv2.imshow('opencv', img)
         cv2.waitKey(1)
-        robot.set_speed(0, 0)
+        robot.set_wheel_velocities(0, 0)
     coppelia.stop_simulation()
     cv2.destroyAllWindows()
 
