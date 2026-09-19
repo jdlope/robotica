@@ -68,7 +68,10 @@ class P3DX():
 
     def get_lidar(self):
         # data = self.sim.getFloatArrayProperty(self.sim.handle_scene, "signal.lidarData")
-        data = self.sim.getFloatArrayProperty(self.lidar, "signal.lidarData")
+        if self.sim.getSimulationState() == self.sim.simulation_stopped:
+            data = []
+        else:
+            data = self.sim.getFloatArrayProperty(self.lidar, "signal.lidarData")
         return data
 
     def set_speed(self, left_speed, right_speed):
