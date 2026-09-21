@@ -1,10 +1,9 @@
 '''
-robotica.py
+p3dx.py
 
-Provides the communication between CoppeliaSim robotics simulator and
-external Python applications via the ZeroMQ remote API.
+Basic operations for the Pioneer 3-DX robot.
 
-Copyright (C) 2025 Javier de Lope
+Copyright (C) 2026 Javier de Lope
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -20,62 +19,45 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-import numpy as np
+import warnings
+
 import cv2
-import time
-
-from coppeliasim_zmqremoteapi_client import RemoteAPIClient
-
-
-class Coppelia():
-
-    def __init__(self):
-        print('*** connecting to coppeliasim')
-        client = RemoteAPIClient()
-        self.sim = client.getObject('sim')
-
-    def start_simulation(self):
-        # print('*** saving environment')
-        self.default_idle_fps = self.sim.getInt32Param(self.sim.intparam_idle_fps)
-        self.sim.setInt32Param(self.sim.intparam_idle_fps, 0)
-        self.sim.startSimulation()
-
-    def stop_simulation(self):
-        # print('*** stopping simulation')
-        self.sim.stopSimulation()
-        while self.sim.getSimulationState() != self.sim.simulation_stopped:
-            time.sleep(0.1)
-        # print('*** restoring environment')
-        self.sim.setInt32Param(self.sim.intparam_idle_fps, self.default_idle_fps)
-        print('*** done')
-
-    def is_running(self):
-        return self.sim.getSimulationState() != self.sim.simulation_stopped
+import numpy as np
+from core import Coppelia
 
 
 class P3DX():
 
-    num_sonar = 16
-    sonar_max = 1.0
+    @property
+    def NUM_SONAR(self):
+        return 16
+    
+    @property
+    def SONAR_MAX(self):
+        return 1.0
 
     def __init__(self, sim, robot_id, use_camera=False, use_lidar=False):
         self.sim = sim
-        print('*** getting handles', robot_id)
+        print('*** getting p3dx handles', robot_id)
         self.left_motor = self.sim.getObject(f'/{robot_id}/leftMotor')
         self.right_motor = self.sim.getObject(f'/{robot_id}/rightMotor')
         self.sonar = []
-        for i in range(self.num_sonar):
+        for i in range(self.NUM_SONAR):
             self.sonar.append(self.sim.getObject(f'/{robot_id}/ultrasonicSensor[{i}]'))
         if use_camera:
             self.camera = self.sim.getObject(f'/{robot_id}/camera')
         if use_lidar:
             self.lidar = self.sim.getObject(f'/{robot_id}/lidar')
 
+    def set_wheel_velocities(self, w_r, w_l):
+        self.sim.setJointTargetVelocity(self.right_motor, w_r)
+        self.sim.setJointTargetVelocity(self.left_motor, w_l)
+
     def get_sonar(self):
         readings = []
-        for i in range(self.num_sonar):
+        for i in range(self.NUM_SONAR):
             res,dist,_,_,_ = self.sim.readProximitySensor(self.sonar[i])
-            readings.append(dist if res == 1 else self.sonar_max)
+            readings.append(dist if res == 1 else self.SONAR_MAX)
         return readings
 
     def get_image(self):
@@ -86,23 +68,21 @@ class P3DX():
 
     def get_lidar(self):
         # data = self.sim.getFloatArrayProperty(self.sim.handle_scene, "signal.lidarData")
-        data = self.sim.getFloatArrayProperty(self.lidar, "signal.lidarData")
+        if self.sim.getSimulationState() == self.sim.simulation_stopped:
+            data = []
+        else:
+            data = self.sim.getFloatArrayProperty(self.lidar, "signal.lidarData")
         return data
 
     def set_speed(self, left_speed, right_speed):
+        warnings.warn(
+            "set_speed() is deprecated; use set_wheel_velocities() instead",
+            DeprecationWarning,
+            stacklevel=2
+            )
         self.sim.setJointTargetVelocity(self.left_motor, left_speed)
         self.sim.setJointTargetVelocity(self.right_motor, right_speed)
 
 
-def main(args=None):
-    coppelia = Coppelia()
-    robot = P3DX(coppelia.sim, 'PioneerP3DX')
-    robot.set_speed(+1.2, -1.2)
-    coppelia.start_simulation()
-    while (t := coppelia.sim.getSimulationTime()) < 3:
-        print(f'Simulation time: {t:.3f} [s]')
-    coppelia.stop_simulation()
-
-
 if __name__ == '__main__':
-    main()
+    pass
